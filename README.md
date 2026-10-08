@@ -1,4 +1,4 @@
-# Liatrio API
+# Go API
 
 A simple REST API built with Go and the Fiber framework.
 
