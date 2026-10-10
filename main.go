@@ -17,7 +17,7 @@ func main() {
     app.Get("/", func(c *fiber.Ctx) error {
 		response := Response{
 			Message: "My name is Sam",
-			Timestamp: time.Now().Unix().Milli(),
+			Timestamp: time.Now().UnixMilli(),
 		}
         return c.JSON(response)
     })
