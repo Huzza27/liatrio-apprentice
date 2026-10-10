@@ -1,0 +1,24 @@
+
+name: Liatrio CI
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t liatrio-demo .
+
+      - name: Start Docker container
+        run: docker run -d --name liatrio-app -p 80:3000 liatrio-demo
+
+      - name: Run Liatrio tests
+        uses: liatrio/github-actions/apprentice-action@master
