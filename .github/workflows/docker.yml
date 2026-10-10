@@ -3,7 +3,7 @@ name: Liatrio CI
 
 on:
   push:
-    branches: [main]
+    branches: [master]
   workflow_dispatch:
 
 jobs:
