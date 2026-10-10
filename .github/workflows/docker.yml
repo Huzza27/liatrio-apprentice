@@ -18,7 +18,7 @@ jobs:
         run: docker build -t liatrio-demo .
 
       - name: Start Docker container
-        run: docker run -d --name liatrio-app -p 80:3000 liatrio-demo
+        run: docker run -d --name liatrio-app -p 80:80 liatrio-demo
 
       - name: Run Liatrio tests
         uses: liatrio/github-actions/apprentice-action@master
