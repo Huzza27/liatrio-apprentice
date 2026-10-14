@@ -1,24 +1,58 @@
 
-name: Liatrio CI
+name: Deploy to Cloud Run
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: stable-century-402323
+  REGION: us-west1
+  REPOSITORY: liatrio-repo
+  SERVICE: liatrio-demo
+
 jobs:
-  build-and-test:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t liatrio-demo .
+      - name: Run Go tests
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
 
-      - name: Start Docker container
-        run: docker run -d --name liatrio-app -p 80:80 liatrio-demo
+      - name: Test application
+        run: go test ./...
 
-      - name: Run Liatrio tests
-        uses: liatrio/github-actions/apprentice-action@0b41561cca6822cc8d880fe0e49e7807a41fdf91
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/371013565379/locations/global/workloadIdentityPools/github-actions/providers/github
+          service_account: liatrio-github-deployer@stable-century-402323.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker authentication
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ env.SERVICE }}
+          region: ${{ env.REGION }}
+          image: ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.SERVICE }}:${{ github.sha }}
