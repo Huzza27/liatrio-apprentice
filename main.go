@@ -10,8 +10,9 @@ import (
 )
 
 type Response struct {
-	Message   string `json:"message"`
-	Timestamp int64  `json:"timestamp"`
+    Message   string `json:"message"`
+    Timestamp int64  `json:"timestamp"`
+    Version   string `json:"version"`
 }
 
 func main() {
@@ -26,6 +27,7 @@ func main() {
 		response := Response{
 			Message:   "My name is Sam",
 			Timestamp: time.Now().UnixMilli(),
+			Version: "1.1.0",
 		}
 		return c.JSON(response)
 	})
