@@ -1,26 +1,34 @@
+
 package main
 
-import 
-(
+import (
+	"log"
+	"os"
 	"time"
+
 	"github.com/gofiber/fiber/v2"
 )
 
 type Response struct {
-	Message string `json:"message"`
-	Timestamp int64 `json:"timestamp"`
-} 
+	Message   string `json:"message"`
+	Timestamp int64  `json:"timestamp"`
+}
 
 func main() {
-    app := fiber.New()
+	app := fiber.New()
 
-    app.Get("/", func(c *fiber.Ctx) error {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "80"
+	}
+
+	app.Get("/", func(c *fiber.Ctx) error {
 		response := Response{
-			Message: "My name is Sam",
+			Message:   "My name is Sam",
 			Timestamp: time.Now().UnixMilli(),
 		}
-        return c.JSON(response)
-    })
+		return c.JSON(response)
+	})
 
-    app.Listen(":80")
+	log.Fatal(app.Listen(":" + port))
 }
