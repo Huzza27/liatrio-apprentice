@@ -9,6 +9,11 @@ COPY . .
 
 RUN go build -o app .
 
-EXPOSE 80
+ARG APP_VERSION=dev
+ENV APP_VERSION=${APP_VERSION}
+
+EXPOSE 8080
 
 CMD ["./app"]
+
+

@@ -1,11 +1,9 @@
-
 package main
 
 import (
 	"log"
 	"os"
 	"time"
-
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -22,12 +20,18 @@ func main() {
 	if port == "" {
 		port = "80"
 	}
+	
+	version := os.Getenv("APP_VERSION")
+
+	if version == "" {
+		version = "dev"
+	}
 
 	app.Get("/", func(c *fiber.Ctx) error {
 		response := Response{
 			Message:   "My name is Sam",
 			Timestamp: time.Now().UnixMilli(),
-			Version: "1.1.0",
+			Version: version,
 		}
 		return c.JSON(response)
 	})
