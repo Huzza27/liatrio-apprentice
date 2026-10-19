@@ -20,6 +20,4 @@ COPY --from=builder /app/app ./app
 ARG APP_VERSION=dev
 ENV APP_VERSION=${APP_VERSION}
 
-EXPOSE 8080
-
 CMD ["./app"]
