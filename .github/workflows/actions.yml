@@ -1,4 +1,4 @@
-name: Deploy to Cloud Run
+name: Liatrio CI/CD
 
 on:
   push:
@@ -16,14 +16,31 @@ env:
   SERVICE: liatrio-demo
 
 jobs:
-  deploy:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Go tests
+      - name: Build Docker image
+        run: docker build -t liatrio-demo .
+
+      - name: Start Docker container
+        run: docker run -d --name liatrio-app -p 80:80 liatrio-demo
+
+      - name: Run Liatrio tests
+        uses: liatrio/github-actions/apprentice-action@0b41561cca6822cc8d880fe0e49e7807a41fdf91
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
