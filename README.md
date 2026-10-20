@@ -48,5 +48,6 @@ Example response:
 {
   "message": "My name is Sam",
   "timestamp": 1791417600
+  "version: commit SHA"
 }
 ```
